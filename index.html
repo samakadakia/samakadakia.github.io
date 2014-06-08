@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Find all possible schedules you can take next quarter">
+
+
+    <title>NU Course Schedulizer</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="http://getbootstrap.com/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="index.js"></script>
+
+    <link href="fullcalendar/fullcalendar.css" rel='stylesheet' />
+    <link href="fullcalendar/fullcalendar.print.css" rel='stylesheet' media='print' />
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/jquery-ui.custom.min.js"></script>
+    <script src="fullcalendar/fullcalendar.min.js"></script>
+    <script>
+    $(document).ready(function() {
+  
+    $('#calendar').fullCalendar({
+      //Calendar header only contains the title
+      header: {
+        left: '',
+        center: 'title',
+        right: ''
+      },
+      //Each column only displays the day of the week
+      columnFormat: {
+        month: 'ddd',
+        week: 'ddd',
+        day: 'dddd',
+      },
+      //Set the default year, month and day. This only matters such that Monday is the default start date. The actual date is not displayed so it should not matter to the user and the data only sends the day of the week.
+      year: 2014,
+      month: 4,
+      date: 10,
+      allDaySlot: {
+        default: false 
+      },
+      //Create the initial title for the weekly view (the only available view)
+      titleFormat: {
+        week: "'Class Schedule'"
+      },
+      //Hide weekends
+      weekends: false,
+      //Set the min time to 8
+       minTime: 8,
+      //Set the max time to 10
+       maxTime: 22,
+      //Do not allow users to edit the calendar
+      editable: false,
+      //Calendar is initially blank
+      events: [],
+      //Set calendar style
+      defaultView: 'agendaWeek'
+    });
+  });
+</script>
+<style>
+
+  body {
+    margin-top: 40px;
+    font-size: 14px;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    }
+    
+  #loading {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    }
+
+  #calendar {
+    width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    }
+
+    .this-container{
+        padding-top:25px;
+    }
+
+</style>
+</head>
+
+<body>
+    <div class="container this-container">
+
+<!-- Accordion panel style UI effects -->
+<div class="panel-group" id="accordion">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          Step 1: How many courses should be in your schedule?  
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+            <!--Number of Courses -->
+            <h5>
+                <span>Build me a schedule with <input type="number" id="numOfCourses" style="width: 35px" max="5" min="1" value="4"> courses
+                </span>
+            </h5>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+          Step 2: Choose up to 8 courses. 
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div id="Courses">
+                <!--Course 1 -->
+                <form name="Course1" class="form-inline" role="form">
+                    <h5><span> Course 1: 
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj1">Subject</label>
+                        <input type="text" class="form-control" name="Subj1" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum1">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum1" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required1"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+
+                <!--Course 2 -->
+                <form name="Course2" class="form-inline" role="form">
+                    <h5><span> Course 2:
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj2">Subject</label>
+                        <input type="text" class="form-control" name="Subj2" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum2">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum2" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required2"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+                <!--Course 3 -->
+                <form name="Course3" class="form-inline" role="form">
+                    <h5><span> Course 3:
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj3">Subject</label>
+                        <input type="text" class="form-control" name="Subj3" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum3">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum3" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required3"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+                 <!--Course 4 -->
+                <form name="Course4" class="form-inline" role="form">
+                    <h5><span> Course 4:
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj4">Subject</label>
+                        <input type="text" class="form-control" name="Subj4" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum4">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum4" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required4"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+                <!--Course 5 -->
+                <form name="Course5" class="form-inline" role="form">
+                    <h5><span> Course 5:
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj5">Subject</label>
+                        <input type="text" class="form-control" name="Subj5" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum5">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum5" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required5"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+                <!--Course 6 -->
+                <form name="Course6" class="form-inline" role="form">
+                    <h5><span> Course 6:
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj6">Subject</label>
+                        <input type="text" class="form-control" name="Subj6" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum6">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum6" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required6"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+                <!--Course 7 -->
+                <form name="Course7" class="form-inline" role="form">
+                    <h5><span> Course 7:
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj7">Subject</label>
+                        <input type="text" class="form-control" name="Subj7" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum7">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum7" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required7"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+                <!--Course 8 -->
+                <form name="Course8" class="form-inline" role="form">
+                    <h5><span> Course 8:
+                    <div class="form-group">
+                        <label class="sr-only" for="Subj8">Subject</label>
+                        <input type="text" class="form-control" name="Subj8" placeholder="Subject (e.g. EECS)">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="CourseNum8">Course Number</label>
+                        <input type="text" class="form-control" name="CourseNum8" placeholder="Course # (e.g. 230)">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="required8"> Required
+                        </label>
+                    </div>
+                    </span></h5>
+                </form></br>
+                </div><!--Courses-->
+      </div><!--Panel Body-->
+    </div><!--collapseTwo-->
+  </div><!--Panel-->
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+          Step 3: Choose your timings (optional).
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse">
+      <div class="panel-body">
+        <h5> 
+                    <div class="cols-md-4">No courses before </div></br>
+
+                    <div class="cols-md-4">
+                        <select id="startHour"> 
+                            <option value ="null"></option>
+                            <option value="1">01</option>
+                            <option value="2">02</option>
+                            <option value="3">03</option>
+                            <option value="4">04</option>
+                            <option value="5">05</option>
+                            <option value="6">06</option>
+                            <option value="7">07</option>
+                            <option selected="selected" value="8">08</option>
+                            <option value="9">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="0">12</option>
+                        </select>
+                        :
+                        <select id="startMinute">
+                            <option value ="null"></option>
+                            <option selected="selected" value ="0">00</option>
+                            <option value ="1">01</option>
+                            <option value ="2">02</option>
+                            <option value ="3">03</option> 
+                            <option value ="4">04</option>
+                            <option value ="5">05</option> 
+                            <option value ="6">06</option>
+                            <option value ="7">07</option> 
+                            <option value ="8">08</option>
+                            <option value ="9">09</option>
+                            <option value ="10">10</option>
+                            <option value ="11">11</option>
+                            <option value ="12">12</option>
+                            <option value ="13">13</option> 
+                            <option value ="14">14</option>
+                            <option value ="15">15</option> 
+                            <option value ="16">16</option>
+                            <option value ="17">17</option> 
+                            <option value ="18">18</option>
+                            <option value ="19">19</option>
+                            <option value ="20">20</option>
+                            <option value ="21">21</option>
+                            <option value ="22">22</option>
+                            <option value ="23">23</option> 
+                            <option value ="24">24</option>
+                            <option value ="25">25</option> 
+                            <option value ="26">26</option>
+                            <option value ="27">27</option> 
+                            <option value ="28">28</option>
+                            <option value ="29">29</option>
+                            <option value ="30">30</option>
+                            <option value ="31">31</option>
+                            <option value ="32">32</option>
+                            <option value ="33">33</option> 
+                            <option value ="34">34</option>
+                            <option value ="35">35</option> 
+                            <option value ="36">36</option>
+                            <option value ="37">37</option> 
+                            <option value ="38">38</option>
+                            <option value ="39">39</option>
+                            <option value ="40">40</option>
+                            <option value ="41">41</option>
+                            <option value ="42">42</option>
+                            <option value ="43">43</option> 
+                            <option value ="44">44</option>
+                            <option value ="45">45</option> 
+                            <option value ="46">46</option>
+                            <option value ="47">47</option> 
+                            <option value ="48">48</option>
+                            <option value ="49">49</option>
+                            <option value ="50">50</option>
+                            <option value ="51">51</option>
+                            <option value ="52">52</option>
+                            <option value ="53">53</option> 
+                            <option value ="54">54</option>
+                            <option value ="55">55</option> 
+                            <option value ="56">56</option>
+                            <option value ="57">57</option> 
+                            <option value ="58">58</option>
+                            <option value ="59">59</option>
+                        </select>
+
+                        <select id="startTimeOfDay">
+                            <option value ="null"></option>
+                            <option selected="selected" value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div><!--column-->
+                    
+                    </br>
+                    </br>
+
+                    <div class="cols-md-4">No courses after </div></br>
+
+
+                    <div class="cols-md-4">
+                        <select id="endHour">
+                            <option value ="null"></option> 
+                            <option value="1">01</option>
+                            <option value="2">02</option>
+                            <option value="3">03</option>
+                            <option value="4">04</option>
+                            <option value="5">05</option>
+                            <option value="6">06</option>
+                            <option value="7">07</option>
+                            <option value="8">08</option>
+                            <option value="9">09</option>
+                            <option selected="selected" value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="0">12</option>
+                        </select>
+                        :
+                        <select id="endMinute">
+                            <option value ="null"></option>
+                            <option selected="selected" value ="0">00</option>
+                            <option value ="1">01</option>
+                            <option value ="2">02</option>
+                            <option value ="3">03</option> 
+                            <option value ="4">04</option>
+                            <option value ="5">05</option> 
+                            <option value ="6">06</option>
+                            <option value ="7">07</option> 
+                            <option value ="8">08</option>
+                            <option value ="9">09</option>
+                            <option value ="10">10</option>
+                            <option value ="11">11</option>
+                            <option value ="12">12</option>
+                            <option value ="13">13</option> 
+                            <option value ="14">14</option>
+                            <option value ="15">15</option> 
+                            <option value ="16">16</option>
+                            <option value ="17">17</option> 
+                            <option value ="18">18</option>
+                            <option value ="19">19</option>
+                            <option value ="20">20</option>
+                            <option value ="21">21</option>
+                            <option value ="22">22</option>
+                            <option value ="23">23</option> 
+                            <option value ="24">24</option>
+                            <option value ="25">25</option> 
+                            <option value ="26">26</option>
+                            <option value ="27">27</option> 
+                            <option value ="28">28</option>
+                            <option value ="29">29</option>
+                            <option value ="30">30</option>
+                            <option value ="31">31</option>
+                            <option value ="32">32</option>
+                            <option value ="33">33</option> 
+                            <option value ="34">34</option>
+                            <option value ="35">35</option> 
+                            <option value ="36">36</option>
+                            <option value ="37">37</option> 
+                            <option value ="38">38</option>
+                            <option value ="39">39</option>
+                            <option value ="40">40</option>
+                            <option value ="41">41</option>
+                            <option value ="42">42</option>
+                            <option value ="43">43</option> 
+                            <option value ="44">44</option>
+                            <option value ="45">45</option> 
+                            <option value ="46">46</option>
+                            <option value ="47">47</option> 
+                            <option value ="48">48</option>
+                            <option value ="49">49</option>
+                            <option value ="50">50</option>
+                            <option value ="51">51</option>
+                            <option value ="52">52</option>
+                            <option value ="53">53</option> 
+                            <option value ="54">54</option>
+                            <option value ="55">55</option> 
+                            <option value ="56">56</option>
+                            <option value ="57">57</option> 
+                            <option value ="58">58</option>
+                            <option value ="59">59</option>
+                        </select>
+
+                        <select id="endTimeOfDay">
+                            <option value ="null"></option>
+                            <option value="AM">AM</option>
+                            <option selected="selected" value="PM">PM</option>
+                        </select>
+                    </div><!--column-->
+                </h5>
+      </div><!--Panel Body-->
+    </div><!--CollapseThree-->
+  </div><!--Panel-->
+</div><!--Panel group-->
+    <button type="submit" class="btn btn-primary" onclick="buildSchedule()">Show Possible Schedules</button>
+    </br>
+</br>
+
+<!--calendar display-->
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="calendar"></div>
+            <div class="panel-footer">
+                <div align="right">
+                    <button type="submit" class="btn btn-primary" onclick="updateEvents()">Next Schedule</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div><!--Entire Container-->
+</body>
